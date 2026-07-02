@@ -145,7 +145,10 @@ export default function MissionControl() {
           }}>A</div>
           <div>
             <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: 0.2 }}>AMOS<sup style={{ fontSize: 10 }}>™</sup> Mission Control</div>
-            <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>AI MARKETING TEAM — MULTI-BRAND ENGINE</div>
+            <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>
+              POWERED BY MATE<sup style={{ fontSize: 8 }}>™</sup> ENGINE
+              <span style={{ color: text3, fontWeight: 500, letterSpacing: 0.3 }}> · Multi-Agent Autonomous Team Engine</span>
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

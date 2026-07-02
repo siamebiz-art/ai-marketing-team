@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AMOS™ Mission Control",
-  description: "AI Marketing Team™ — multi-brand AI marketing engine",
+  description: "Powered by MATE™ Engine — Multi-Agent Autonomous Team Engine",
 };
 
 export default function RootLayout({

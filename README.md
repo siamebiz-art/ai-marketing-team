@@ -1,7 +1,17 @@
-# AI Marketing Team™
+# AI Marketing Team™ — MATE™ Engine
 
 Standalone engine project. Phase 2 of the AMOS build strategy — full context in
 `docs/AMOS-VISION-SPEC.md` in the `toonetic` repo.
+
+## Naming (2026-07-02)
+
+The `core/` engine (agent framework, orchestrator, brand-context) is branded **MATE™ Engine**
+("Multi-Agent Autonomous Team Engine") — a name for the department-agnostic platform that only
+made sense once it was proven generic across 2 real departments. Each department keeps its own
+product-facing identity: **AMOS™ Mission Control** (`/`) for Marketing, **AI Support Team**
+(`/support`) for Support. Every page footer/header says "Powered by MATE™ Engine" to make that
+relationship visible. Repo/package name stays `ai-marketing-team` — this is a product-facing
+brand name, not a repo rename.
 
 ## Why this repo exists
 
@@ -18,7 +28,8 @@ standalone. Not addressed yet.
 
 ## Status (2026-07-02)
 
-Live in production at `mission.toonetic.com`. Two departments built and verified end-to-end:
+Live in production at `mate.toonetic.com` (`mission.toonetic.com` still works as an alias, not
+removed). Two departments built and verified end-to-end:
 
 - **Marketing** (`lib/departments/marketing/`) — 6 specialists (Strategy, Content Strategist,
   Copywriter, Creative Director, Analytics, SEO), workflow `create-todays-content`

@@ -89,7 +89,10 @@ export default function SupportTeam() {
       <div style={{ borderBottom: `1px solid ${border}`, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: 18, fontWeight: 800 }}>🎧 AI Support Team</div>
-          <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>DEPARTMENT #2 — SAME ENGINE, DIFFERENT DOMAIN</div>
+          <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>
+            POWERED BY MATE<sup style={{ fontSize: 8 }}>™</sup> ENGINE
+            <span style={{ fontWeight: 500, letterSpacing: 0.3 }}> · Multi-Agent Autonomous Team Engine</span>
+          </div>
         </div>
         <a href="/approvals" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>📋 Approvals →</a>
       </div>
