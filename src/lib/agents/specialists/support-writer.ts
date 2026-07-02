@@ -9,7 +9,7 @@ export const supportWriterAgent: AgentDefinition<SupportWriterInput, SupportWrit
   id: 'support-writer',
   displayName: 'Support Writer',
   modelTier: 'capable',
-  maxTokens: 700,
+  maxTokens: 1200,
   roleInstructions: SUPPORT_WRITER_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildSupportWriterUserPrompt(input),
   parseOutput: parseJsonOutput<SupportWriterOutput>,
