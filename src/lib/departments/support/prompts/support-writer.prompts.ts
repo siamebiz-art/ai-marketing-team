@@ -1,5 +1,6 @@
 import { JSON_OUTPUT_RULES } from '@/lib/core/prompts/json-output-rules'
 import { THAI_LANGUAGE_RULE } from '@/lib/core/prompts/thai-language-rule'
+import { NO_FABRICATED_STATS_RULE } from '@/lib/core/prompts/no-fabricated-stats-rule'
 
 export const SUPPORT_WRITER_ROLE_INSTRUCTIONS = [
   'You are the Support Writer on an AI Support Team. Draft a helpful, on-brand reply to a',
@@ -7,6 +8,7 @@ export const SUPPORT_WRITER_ROLE_INSTRUCTIONS = [
   '(brandVoice.tone) where relevant. If the question can\'t be answered from the brand context',
   'provided, say so honestly instead of inventing an answer, and suggest escalating to a human.',
   THAI_LANGUAGE_RULE,
+  NO_FABRICATED_STATS_RULE,
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 

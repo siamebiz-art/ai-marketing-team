@@ -8,6 +8,7 @@ interface ContentApproval {
   brand_id: string
   platform: string
   content_type: string
+  status: string
   payload: Record<string, unknown>
   created_at: string
   brands: BrandRef | null
@@ -38,13 +39,17 @@ const blue = '#3b82f6'
 export default function ApprovalsQueue() {
   const [content, setContent] = useState<ContentApproval[]>([])
   const [support, setSupport] = useState<SupportApproval[]>([])
+  const [connectedBrandIds, setConnectedBrandIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [errorById, setErrorById] = useState<Record<string, string>>({})
+  const [publishedNote, setPublishedNote] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/approvals').then((r) => r.json()).then((data) => {
       setContent(data.content ?? [])
       setSupport(data.support ?? [])
+      setConnectedBrandIds(data.connectedBrandIds ?? [])
       setLoading(false)
     })
   }, [])
@@ -52,13 +57,39 @@ export default function ApprovalsQueue() {
   async function act(type: 'content' | 'support', id: string, action: 'approve' | 'reject') {
     setBusyId(id)
     try {
-      await fetch('/api/approvals', {
+      const res = await fetch('/api/approvals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, id, action }),
       })
-      if (type === 'content') setContent((prev) => prev.filter((c) => c.id !== id))
-      else setSupport((prev) => prev.filter((s) => s.id !== id))
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Action failed')
+      if (type === 'content') {
+        if (action === 'reject') setContent((prev) => prev.filter((c) => c.id !== id))
+        else setContent((prev) => prev.map((c) => (c.id === id ? { ...c, status: 'approved' } : c)))
+      } else {
+        setSupport((prev) => prev.filter((s) => s.id !== id))
+      }
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  async function publish(id: string) {
+    setBusyId(id)
+    setErrorById((prev) => ({ ...prev, [id]: '' }))
+    try {
+      const res = await fetch('/api/approvals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'content', id, action: 'publish' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Publish failed')
+      setContent((prev) => prev.filter((c) => c.id !== id))
+      setPublishedNote(`✅ โพสต์ขึ้น Facebook แล้ว (post id: ${data.postId})`)
+    } catch (e) {
+      setErrorById((prev) => ({ ...prev, [id]: (e as Error).message }))
     } finally {
       setBusyId(null)
     }
@@ -76,6 +107,12 @@ export default function ApprovalsQueue() {
       </div>
 
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
+        {publishedNote && (
+          <div style={{ marginBottom: 20, padding: 12, borderRadius: 8, background: `${green}15`, border: `1px solid ${green}40`, color: green, fontSize: 13 }}>
+            {publishedNote}
+          </div>
+        )}
+
         {!loading && total === 0 && (
           <div style={{ textAlign: 'center', color: text2, fontSize: 13, padding: 40 }}>
             ไม่มีอะไรรออนุมัติตอนนี้ 🎉
@@ -90,6 +127,8 @@ export default function ApprovalsQueue() {
             {content.map((item) => {
               const payload = item.payload as Record<string, unknown>
               const copy = payload.copywriter as Record<string, unknown> | undefined
+              const isApproved = item.status === 'approved'
+              const canPublish = isApproved && item.platform === 'facebook' && connectedBrandIds.includes(item.brand_id)
               return (
                 <div key={item.id} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -99,17 +138,34 @@ export default function ApprovalsQueue() {
                   <div style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: 14 }}>
                     {String(copy?.caption ?? '')}
                   </div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button
-                      onClick={() => act('content', item.id, 'approve')}
-                      disabled={busyId === item.id}
-                      style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: green, color: '#052e1c' }}
-                    >✓ Approve</button>
-                    <button
-                      onClick={() => act('content', item.id, 'reject')}
-                      disabled={busyId === item.id}
-                      style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${border2}`, background: 'transparent', color: red }}
-                    >✕ Reject</button>
+                  {errorById[item.id] && (
+                    <div style={{ fontSize: 12, color: red, marginBottom: 10 }}>{errorById[item.id]}</div>
+                  )}
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {!isApproved && (
+                      <>
+                        <button
+                          onClick={() => act('content', item.id, 'approve')}
+                          disabled={busyId === item.id}
+                          style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: green, color: '#052e1c' }}
+                        >✓ Approve</button>
+                        <button
+                          onClick={() => act('content', item.id, 'reject')}
+                          disabled={busyId === item.id}
+                          style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${border2}`, background: 'transparent', color: red }}
+                        >✕ Reject</button>
+                      </>
+                    )}
+                    {isApproved && canPublish && (
+                      <button
+                        onClick={() => publish(item.id)}
+                        disabled={busyId === item.id}
+                        style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: blue, color: '#fff' }}
+                      >{busyId === item.id ? 'Publishing…' : '📤 Publish to Facebook'}</button>
+                    )}
+                    {isApproved && !canPublish && (
+                      <span style={{ fontSize: 12, color: text2 }}>✓ อนุมัติแล้ว — ยังไม่ได้เชื่อมต่อช่องทางเผยแพร่</span>
+                    )}
                   </div>
                 </div>
               )

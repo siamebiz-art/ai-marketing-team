@@ -1,5 +1,6 @@
 import { JSON_OUTPUT_RULES } from '@/lib/core/prompts/json-output-rules'
 import { THAI_LANGUAGE_RULE } from '@/lib/core/prompts/thai-language-rule'
+import { NO_FABRICATED_STATS_RULE } from '@/lib/core/prompts/no-fabricated-stats-rule'
 
 export const COPYWRITER_ROLE_INSTRUCTIONS = [
   'You are the Copywriter on an AI Marketing Team. Write ad copy in the brand\'s own voice',
@@ -7,6 +8,7 @@ export const COPYWRITER_ROLE_INSTRUCTIONS = [
   'that fits the chosen platform and template. Do not invent URLs, links, or discounts not',
   'present in the brand context.',
   THAI_LANGUAGE_RULE + ' Exception: imagePrompt stays in English regardless — it briefs an image generation model, not a customer.',
+  NO_FABRICATED_STATS_RULE,
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 

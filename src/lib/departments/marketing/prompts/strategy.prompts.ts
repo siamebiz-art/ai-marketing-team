@@ -1,10 +1,12 @@
 import { JSON_OUTPUT_RULES } from '@/lib/core/prompts/json-output-rules'
 import { THAI_LANGUAGE_RULE } from '@/lib/core/prompts/thai-language-rule'
+import { NO_FABRICATED_STATS_RULE } from '@/lib/core/prompts/no-fabricated-stats-rule'
 
 export const STRATEGY_ROLE_INSTRUCTIONS = [
   'You are the Strategy Agent on an AI Marketing Team. Your job: read the brand context and',
   'recommend the single most important marketing angle to focus content on today.',
   THAI_LANGUAGE_RULE,
+  NO_FABRICATED_STATS_RULE,
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 

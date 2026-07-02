@@ -40,6 +40,7 @@ export async function distillMemory(brandId: string): Promise<DistilledPattern[]
 Recent campaigns:\n${JSON.stringify(recentCampaigns ?? [], null, 2)}
 
 Extract up to ${MAX_PATTERNS_PER_RUN} short, reusable patterns (1-3 sentences each) worth remembering for future content — e.g. what worked, brand voice notes, competitor moves, campaign learnings. Only include patterns actually supported by the data above.
+Do NOT restate specific numbers/percentages/customer counts that appear in the content payload as if they were verified facts — a past post may itself have invented a statistic. Describe the pattern qualitatively (e.g. "quantified before/after claims perform well structurally") instead of repeating the specific invented number.
 JSON: {"patterns": [{"category": "content_pattern|brand_voice_note|competitor_move|campaign_learning", "summary": "...", "confidence": "low|medium|high"}]}`,
     }],
   })
