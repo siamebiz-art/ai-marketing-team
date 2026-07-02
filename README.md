@@ -18,25 +18,40 @@ standalone. Not addressed yet.
 
 ## Status (2026-07-02)
 
-First vertical slice built and verified end-to-end: Marketing Brain schema, agent framework,
-prompt library, workflow-registry orchestrator, one workflow (`create-todays-content`, 5
-specialists, approval gate), AI Memory distillation. Plan file:
-`C:\Users\Windows 10\.claude\plans\radiant-swimming-ullman.md`.
+Live in production at `mission.toonetic.com`. Two departments built and verified end-to-end:
 
-**Architecture note — this is already multi-department-ready, not marketing-only:**
-- `organizations` → `brands` → `campaigns` is a generic tenant hierarchy, not marketing-specific.
-- The orchestrator core (`lib/orchestrator/executeSteps.ts`) has **zero knowledge of marketing
-  concepts** — it doesn't know what `content_items` is. Each `WorkflowDefinition` owns its own
-  `finalize` hook to decide what "done" means (the marketing workflow writes a `content_items`
-  row; a future Sales/Support/Research workflow would write somewhere else entirely).
-- The agent framework (`lib/agents/`) and workflow registry (`lib/orchestrator/registry.ts`) are
-  plain `Record<string, ...>` registries — adding a non-marketing specialist or workflow doesn't
-  require touching either.
-- **Deliberately not done yet**: renaming the repo/package, or restructuring `src/lib/` into a
-  `core/` vs `departments/marketing/` split. Only one department (Marketing) exists so far —
-  restructuring now would mean guessing the module boundary a second department actually needs.
-  That restructure happens once, informed by real requirements, when department #2 gets built
-  (e.g. AI Research Team, AI Support Team) — not before.
+- **Marketing** (`lib/departments/marketing/`) — 6 specialists (Strategy, Content Strategist,
+  Copywriter, Creative Director, Analytics, SEO), workflow `create-todays-content`
+- **Support** (`lib/departments/support/`) — 2 specialists (Support Categorizer, Support Writer),
+  workflow `answer-support-ticket`, page at `/support`
+
+## Architecture: `core/` vs `departments/`
+
+```
+lib/
+  core/                  — department-agnostic engine, reused unchanged by every department
+    agents/              — AgentDefinition, model tiers, runAgent (the only place that calls
+                            the Anthropic SDK), AGENT_REGISTRY (aggregates every department)
+    orchestrator/         — WorkflowDefinition, executeSteps (has zero knowledge of any
+                            department's concepts — e.g. never heard of `content_items`),
+                            WORKFLOW_REGISTRY (aggregates every department)
+    brand-context/        — BrandContext (organizations → brands → campaigns tenant data +
+                            per-brand memory), loadBrandContext — reused as-is by Support,
+                            confirming "Marketing" was never structural, just a name
+    prompts/              — shared prompt fragments (JSON output rules, Thai language rule)
+  departments/
+    marketing/             — specialists/, prompts/, workflows/, index.ts (exports its roster)
+    support/                — same shape
+  supabase/admin.ts        — infra, not department logic
+```
+
+This split happened **after** two real departments existed (restructured from
+`lib/agents/specialists/` + `lib/orchestrator/workflows/` flat layout in commit after
+`answer-support-ticket` shipped), not speculatively before — see project memory for the
+reasoning. Each `WorkflowDefinition` owns an optional `finalize` hook deciding what "done" means
+(marketing writes `content_items`, support writes `support_tickets`) — the orchestrator core has
+no opinion. Adding department #3: write `lib/departments/<name>/` in the same shape, add one
+import + one spread line to `core/agents/registry.ts` and `core/orchestrator/registry.ts`.
 
 ## Stack
 

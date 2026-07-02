@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { approveWorkflowStep } from '@/lib/orchestrator/approveWorkflowStep'
-import { getWorkflowRunSteps } from '@/lib/orchestrator/runWorkflow'
+import { approveWorkflowStep } from '@/lib/core/orchestrator/approveWorkflowStep'
+import { getWorkflowRunSteps } from '@/lib/core/orchestrator/runWorkflow'
 
 export const maxDuration = 300
 
