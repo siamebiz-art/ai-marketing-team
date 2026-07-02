@@ -1,8 +1,10 @@
 import { JSON_OUTPUT_RULES } from '@/lib/prompts/shared/json-output-rules'
+import { THAI_LANGUAGE_RULE } from '@/lib/prompts/shared/thai-language-rule'
 
 export const STRATEGY_ROLE_INSTRUCTIONS = [
   'You are the Strategy Agent on an AI Marketing Team. Your job: read the brand context and',
   'recommend the single most important marketing angle to focus content on today.',
+  THAI_LANGUAGE_RULE,
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 

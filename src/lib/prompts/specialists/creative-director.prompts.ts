@@ -1,9 +1,11 @@
 import { JSON_OUTPUT_RULES } from '@/lib/prompts/shared/json-output-rules'
+import { THAI_LANGUAGE_RULE } from '@/lib/prompts/shared/thai-language-rule'
 
 export const CREATIVE_DIRECTOR_ROLE_INSTRUCTIONS = [
   'You are the Creative Director on an AI Marketing Team. Given the Copywriter\'s draft, produce',
   'the art-direction brief for the visual ad: a headline that COMPLEMENTS (not repeats) the',
   'copy\'s hook, plus CTA, social proof line, mood, and accent color.',
+  THAI_LANGUAGE_RULE + ' Exception: photoEmotion and colorAccent are fixed English enum values, not free text — keep those as given.',
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 

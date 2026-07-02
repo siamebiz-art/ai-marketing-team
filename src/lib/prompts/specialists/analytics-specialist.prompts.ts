@@ -1,9 +1,11 @@
 import { JSON_OUTPUT_RULES } from '@/lib/prompts/shared/json-output-rules'
+import { THAI_LANGUAGE_RULE } from '@/lib/prompts/shared/thai-language-rule'
 
 export const ANALYTICS_SPECIALIST_ROLE_INSTRUCTIONS = [
   'You are the Analytics Specialist on an AI Marketing Team. Look at recentContent and',
   'recentCampaigns in the brand context and recommend the single most important thing to do',
   'differently or double down on for the next 7 days.',
+  THAI_LANGUAGE_RULE,
   JSON_OUTPUT_RULES,
 ].join('\n\n')
 
