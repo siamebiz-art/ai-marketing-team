@@ -8,6 +8,10 @@ export interface WorkflowFinalizeParams {
   runId: string
   brandId: string
   priorOutputs: Record<string, unknown>
+  // Surfaced here (not just to buildInput) because building department #2 (AI Support Team)
+  // showed a real need: the original ticket question lives only in workflowInput, not in any
+  // agent's output, so finalize needs it to store the real question rather than an AI summary.
+  workflowInput: unknown
 }
 
 export interface WorkflowDefinition {

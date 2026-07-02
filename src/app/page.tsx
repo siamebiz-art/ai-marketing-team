@@ -23,6 +23,7 @@ const PIPELINE = [
   { id: 'copywriter', label: 'Copywriter', emoji: '\u{270D}\u{FE0F}', color: '#FF9A00' },
   { id: 'creative-director', label: 'Creative Director', emoji: '\u{1F3A8}', color: '#3b82f6' },
   { id: 'analytics-specialist', label: 'Analytics Specialist', emoji: '\u{1F4CA}', color: '#f59e0b' },
+  { id: 'seo-specialist', label: 'SEO Specialist', emoji: '\u{1F50D}', color: '#22c55e' },
 ] as const
 
 const bg = '#080c18'
@@ -68,6 +69,7 @@ function outputPreview(agentId: string, output: Record<string, unknown> | null |
   if (agentId === 'copywriter') return String(o.caption ?? '')
   if (agentId === 'creative-director') return `${o.headline}`
   if (agentId === 'analytics-specialist') return String(o.tip ?? '')
+  if (agentId === 'seo-specialist') return String(o.seoTip ?? '')
   return JSON.stringify(o)
 }
 
@@ -146,12 +148,15 @@ export default function MissionControl() {
             <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>AI MARKETING TEAM — MULTI-BRAND ENGINE</div>
           </div>
         </div>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, background: bg3, border: `1px solid ${border2}`,
-          borderRadius: 999, padding: '6px 14px', fontSize: 12, fontWeight: 600, color: green,
-        }}>
-          <span style={{ width: 7, height: 7, borderRadius: 999, background: green, display: 'inline-block' }} />
-          AI Marketing Team Ready
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <a href="/support" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>🎧 Support Team →</a>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8, background: bg3, border: `1px solid ${border2}`,
+            borderRadius: 999, padding: '6px 14px', fontSize: 12, fontWeight: 600, color: green,
+          }}>
+            <span style={{ width: 7, height: 7, borderRadius: 999, background: green, display: 'inline-block' }} />
+            AI Marketing Team Ready
+          </div>
         </div>
       </div>
 

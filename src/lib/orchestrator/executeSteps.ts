@@ -72,7 +72,7 @@ export async function executeSteps(
   // What "done" means is entirely up to the workflow (a marketing workflow writes a
   // content_items row; a future Sales/Support workflow would write somewhere else, or
   // nothing at all) — the orchestrator itself has no opinion.
-  await workflow.finalize?.({ runId, brandId, priorOutputs })
+  await workflow.finalize?.({ runId, brandId, priorOutputs, workflowInput })
 
   await supabaseAdmin.from('workflow_runs').update({
     status: 'completed', updated_at: new Date().toISOString(),
