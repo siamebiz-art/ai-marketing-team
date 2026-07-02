@@ -3,6 +3,7 @@ import type { WorkflowDefinition } from '@/lib/core/orchestrator/types'
 import type { StrategyOutput } from '@/lib/departments/marketing/prompts/strategy.prompts'
 import type { ContentStrategistOutput } from '@/lib/departments/marketing/prompts/content-strategist.prompts'
 import type { CopywriterOutput } from '@/lib/departments/marketing/prompts/copywriter.prompts'
+import { distillMemory } from '@/lib/departments/marketing/distillMemory'
 
 // Deliberately embedded here, not in the brand-context block — "today" must stay in the
 // per-call user prompt (after the cache breakpoint) so the shared brand-context system
@@ -81,5 +82,15 @@ export const createTodaysContentWorkflow: WorkflowDefinition = {
       status: 'pending_approval',
       payload: priorOutputs,
     })
+
+    // AI Memory — turn this run's history into reusable patterns for next time. Awaited
+    // (not truly fire-and-forget) because Vercel serverless functions don't guarantee
+    // unawaited work survives after the response is sent; a distillation failure here must
+    // not fail the workflow itself, so it's isolated in its own try/catch.
+    try {
+      await distillMemory(brandId)
+    } catch (e) {
+      console.error('[create-todays-content] distillMemory failed:', (e as Error).message)
+    }
   },
 }

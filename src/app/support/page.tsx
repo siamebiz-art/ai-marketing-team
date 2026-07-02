@@ -86,9 +86,12 @@ export default function SupportTeam() {
 
   return (
     <main style={{ minHeight: '100vh', background: bg, color: text, fontFamily: "'Inter', 'Sarabun', sans-serif" }}>
-      <div style={{ borderBottom: `1px solid ${border}`, padding: '20px 32px' }}>
-        <div style={{ fontSize: 18, fontWeight: 800 }}>🎧 AI Support Team</div>
-        <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>DEPARTMENT #2 — SAME ENGINE, DIFFERENT DOMAIN</div>
+      <div style={{ borderBottom: `1px solid ${border}`, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 800 }}>🎧 AI Support Team</div>
+          <div style={{ fontSize: 11, color: text2, letterSpacing: 1, fontWeight: 600 }}>DEPARTMENT #2 — SAME ENGINE, DIFFERENT DOMAIN</div>
+        </div>
+        <a href="/approvals" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>📋 Approvals →</a>
       </div>
 
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 24px' }}>

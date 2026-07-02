@@ -149,6 +149,7 @@ export default function MissionControl() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <a href="/approvals" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>📋 Approvals →</a>
           <a href="/support" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>🎧 Support Team →</a>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8, background: bg3, border: `1px solid ${border2}`,
