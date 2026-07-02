@@ -9,7 +9,7 @@ export const contentStrategistAgent: AgentDefinition<ContentStrategistInput, Con
   id: 'content-strategist',
   displayName: 'Content Strategist',
   modelTier: 'capable',
-  maxTokens: 600,
+  maxTokens: 900,
   roleInstructions: CONTENT_STRATEGIST_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildContentStrategistUserPrompt(input),
   parseOutput: parseJsonOutput<ContentStrategistOutput>,

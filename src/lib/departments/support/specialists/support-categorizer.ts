@@ -9,7 +9,7 @@ export const supportCategorizerAgent: AgentDefinition<SupportCategorizerInput, S
   id: 'support-categorizer',
   displayName: 'Support Categorizer',
   modelTier: 'fast',
-  maxTokens: 300,
+  maxTokens: 600,
   roleInstructions: SUPPORT_CATEGORIZER_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildSupportCategorizerUserPrompt(input),
   parseOutput: parseJsonOutput<SupportCategorizerOutput>,

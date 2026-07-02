@@ -9,7 +9,7 @@ export const creativeDirectorAgent: AgentDefinition<CreativeDirectorInput, Creat
   id: 'creative-director',
   displayName: 'Creative Director',
   modelTier: 'fast',
-  maxTokens: 600,
+  maxTokens: 900,
   roleInstructions: CREATIVE_DIRECTOR_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildCreativeDirectorUserPrompt(input),
   parseOutput: parseJsonOutput<CreativeDirectorOutput>,

@@ -6,7 +6,7 @@ export const strategyAgent: AgentDefinition<StrategyInput, StrategyOutput> = {
   id: 'strategy',
   displayName: 'Strategy Agent',
   modelTier: 'fast',
-  maxTokens: 500,
+  maxTokens: 800,
   roleInstructions: STRATEGY_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildStrategyUserPrompt(input),
   parseOutput: parseJsonOutput<StrategyOutput>,
