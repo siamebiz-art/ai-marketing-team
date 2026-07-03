@@ -8,8 +8,10 @@ interface CopywriterPayload {
 }
 
 // Reimplemented thinly from toonetic's own api/cron/amos-publish/route.ts (read-only reference,
-// not shared code — this project stays code-isolated from Toonetic). Text-only for now: no
-// image-generation specialist exists in this project yet, so there's no image URL to attach.
+// not shared code — this project stays code-isolated from Toonetic). Posts with a photo via
+// /photos when content_items.payload.imageUrl exists (set by generateContentImage in
+// create-todays-content's finalize hook); falls back to a text-only /feed post otherwise
+// (older rows, or if image generation failed for this run).
 export async function publishContentToFacebook(contentItemId: string): Promise<{ postId: string }> {
   const { data: item, error: itemError } = await supabaseAdmin
     .from('content_items')
@@ -36,19 +38,28 @@ export async function publishContentToFacebook(contentItemId: string): Promise<{
   const caption = copy?.caption ?? ''
   const hashtags = copy?.hashtags ?? []
   const message = [caption, hashtags.join(' ')].filter(Boolean).join('\n\n')
+  const imageUrl = payload.imageUrl as string | null | undefined
 
-  const fbRes = await fetch(`https://graph.facebook.com/${GRAPH_API_VERSION}/${connection.page_id}/feed`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, access_token: connection.access_token }),
-  })
+  const fbRes = imageUrl
+    ? await fetch(`https://graph.facebook.com/${GRAPH_API_VERSION}/${connection.page_id}/photos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: imageUrl, caption: message, access_token: connection.access_token }),
+      })
+    : await fetch(`https://graph.facebook.com/${GRAPH_API_VERSION}/${connection.page_id}/feed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, access_token: connection.access_token }),
+      })
   const fbData = await fbRes.json() as Record<string, unknown>
   if (!fbRes.ok) {
     const err = (fbData.error as Record<string, unknown> | undefined)?.message
     throw new Error(String(err ?? 'Facebook API error'))
   }
 
-  const postId = fbData.id as string
+  // /photos returns { id: <photo id>, post_id: <feed story id> }; /feed returns { id: <post id> }.
+  // Prefer post_id (the actual feed post) so a photo post's id is consistent with a text post's.
+  const postId = (fbData.post_id as string | undefined) ?? (fbData.id as string)
   await supabaseAdmin.from('content_items').update({
     status: 'published',
     published_at: new Date().toISOString(),

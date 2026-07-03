@@ -127,6 +127,7 @@ export default function ApprovalsQueue() {
             {content.map((item) => {
               const payload = item.payload as Record<string, unknown>
               const copy = payload.copywriter as Record<string, unknown> | undefined
+              const imageUrl = payload.imageUrl as string | null | undefined
               const isApproved = item.status === 'approved'
               const canPublish = isApproved && item.platform === 'facebook' && connectedBrandIds.includes(item.brand_id)
               return (
@@ -135,6 +136,14 @@ export default function ApprovalsQueue() {
                     <span style={{ fontSize: 12, color: text2 }}>{item.brands?.name ?? item.brand_id} · {item.platform}</span>
                     <span style={{ fontSize: 11, color: text2 }}>{new Date(item.created_at).toLocaleString('th-TH')}</span>
                   </div>
+                  {imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      style={{ width: '100%', maxHeight: 320, objectFit: 'cover', borderRadius: 8, marginBottom: 12, border: `1px solid ${border}` }}
+                    />
+                  )}
                   <div style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: 14 }}>
                     {String(copy?.caption ?? '')}
                   </div>

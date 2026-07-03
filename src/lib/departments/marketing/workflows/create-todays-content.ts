@@ -3,7 +3,9 @@ import type { WorkflowDefinition } from '@/lib/core/orchestrator/types'
 import type { StrategyOutput } from '@/lib/departments/marketing/prompts/strategy.prompts'
 import type { ContentStrategistOutput } from '@/lib/departments/marketing/prompts/content-strategist.prompts'
 import type { CopywriterOutput } from '@/lib/departments/marketing/prompts/copywriter.prompts'
+import type { CreativeDirectorOutput } from '@/lib/departments/marketing/prompts/creative-director.prompts'
 import { distillMemory } from '@/lib/departments/marketing/distillMemory'
+import { generateContentImage } from '@/lib/departments/marketing/generateContentImage'
 
 // Deliberately embedded here, not in the brand-context block — "today" must stay in the
 // per-call user prompt (after the cache breakpoint) so the shared brand-context system
@@ -74,13 +76,26 @@ export const createTodaysContentWorkflow: WorkflowDefinition = {
   // future Sales/Support/Research workflow would finalize into a different table entirely.
   finalize: async ({ runId, brandId, priorOutputs }) => {
     const contentStrategy = priorOutputs['content-strategist'] as { platform?: string; contentType?: string } | undefined
+    const copy = priorOutputs.copywriter as CopywriterOutput | undefined
+    const creativeDirector = priorOutputs['creative-director'] as CreativeDirectorOutput | undefined
+
+    const imageUrl = copy?.imagePrompt
+      ? await generateContentImage({
+          brandId,
+          runId,
+          imagePrompt: copy.imagePrompt,
+          photoEmotion: creativeDirector?.photoEmotion,
+          colorAccent: creativeDirector?.colorAccent,
+        })
+      : null
+
     await supabaseAdmin.from('content_items').insert({
       brand_id: brandId,
       workflow_run_id: runId,
       platform: (contentStrategy?.platform ?? 'facebook').toString().toLowerCase(),
       content_type: contentStrategy?.contentType ?? 'post',
       status: 'pending_approval',
-      payload: priorOutputs,
+      payload: { ...priorOutputs, imageUrl },
     })
 
     // AI Memory — turn this run's history into reusable patterns for next time. Awaited

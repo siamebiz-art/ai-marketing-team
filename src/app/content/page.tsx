@@ -71,6 +71,7 @@ export default function PublishedContent() {
         {content.map((item) => {
           const payload = item.payload as Record<string, unknown>
           const copy = payload.copywriter as Record<string, unknown> | undefined
+          const imageUrl = payload.imageUrl as string | null | undefined
           const perf = item.performance as { likes?: number | null; comments?: number | null; shares?: number; fetchedAt?: string; limited?: boolean }
           return (
             <div key={item.id} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
@@ -78,8 +79,18 @@ export default function PublishedContent() {
                 <span style={{ fontSize: 12, color: text2 }}>{item.brands?.name ?? item.brand_id} · {item.platform}</span>
                 <span style={{ fontSize: 11, color: text2 }}>{new Date(item.published_at).toLocaleString('th-TH')}</span>
               </div>
-              <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', marginBottom: 12, color: text2 }}>
-                {String(copy?.caption ?? '').slice(0, 160)}{String(copy?.caption ?? '').length > 160 ? '…' : ''}
+              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                {imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imageUrl}
+                    alt=""
+                    style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 8, border: `1px solid ${border}`, flexShrink: 0 }}
+                  />
+                )}
+                <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', color: text2 }}>
+                  {String(copy?.caption ?? '').slice(0, 160)}{String(copy?.caption ?? '').length > 160 ? '…' : ''}
+                </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <span style={{ fontSize: 13 }}>👍 {perf.likes ?? '—'}</span>
