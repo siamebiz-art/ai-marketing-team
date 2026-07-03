@@ -9,7 +9,7 @@ export async function GET() {
   const [{ data: content, error: contentError }, { data: support, error: supportError }, { data: connections, error: connError }] = await Promise.all([
     supabaseAdmin
       .from('content_items')
-      .select('id, brand_id, platform, content_type, status, payload, created_at, brands(slug, name)')
+      .select('id, brand_id, platform, content_type, status, payload, created_at, scheduled_at, brands(slug, name)')
       .in('status', ['pending_approval', 'approved'])
       .order('created_at', { ascending: false })
       .limit(CONTENT_LIMIT),
@@ -37,7 +37,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json() as { type?: 'content' | 'support'; id?: string; action?: 'approve' | 'reject' | 'publish' }
+  const body = await req.json() as {
+    type?: 'content' | 'support'
+    id?: string
+    action?: 'approve' | 'reject' | 'publish' | 'schedule'
+    scheduledAt?: string
+  }
   if (!body.type || !body.id || !body.action) {
     return NextResponse.json({ error: 'type, id, and action are required' }, { status: 400 })
   }
@@ -52,6 +57,17 @@ export async function POST(req: Request) {
     } catch (e) {
       return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
+  }
+
+  if (body.action === 'schedule') {
+    if (body.type !== 'content' || !body.scheduledAt) {
+      return NextResponse.json({ error: 'schedule requires type "content" and scheduledAt' }, { status: 400 })
+    }
+    // Status stays 'approved' — the /api/cron/publish-scheduled cron does the actual publish
+    // once scheduled_at is reached, reusing publishContentToFacebook unchanged.
+    const { error } = await supabaseAdmin.from('content_items').update({ scheduled_at: body.scheduledAt }).eq('id', body.id)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ ok: true, status: 'scheduled', scheduledAt: body.scheduledAt })
   }
 
   const nextStatus = body.action === 'approve' ? 'approved' : 'rejected'
