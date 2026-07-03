@@ -55,18 +55,14 @@ const blue = '#3b82f6'
 export default function ApprovalsQueue() {
   const [content, setContent] = useState<ContentApproval[]>([])
   const [support, setSupport] = useState<SupportApproval[]>([])
-  const [connectedBrandIds, setConnectedBrandIds] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [errorById, setErrorById] = useState<Record<string, string>>({})
-  const [publishedNote, setPublishedNote] = useState<string | null>(null)
-  const [scheduleInputById, setScheduleInputById] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch('/api/approvals').then((r) => r.json()).then((data) => {
       setContent(data.content ?? [])
       setSupport(data.support ?? [])
-      setConnectedBrandIds(data.connectedBrandIds ?? [])
       setLoading(false)
     })
   }, [])
@@ -87,46 +83,6 @@ export default function ApprovalsQueue() {
       } else {
         setSupport((prev) => prev.filter((s) => s.id !== id))
       }
-    } finally {
-      setBusyId(null)
-    }
-  }
-
-  async function publish(id: string) {
-    setBusyId(id)
-    setErrorById((prev) => ({ ...prev, [id]: '' }))
-    try {
-      const res = await fetch('/api/approvals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'content', id, action: 'publish' }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Publish failed')
-      setContent((prev) => prev.filter((c) => c.id !== id))
-      setPublishedNote(`✅ โพสต์ขึ้น Facebook แล้ว (post id: ${data.postId})`)
-    } catch (e) {
-      setErrorById((prev) => ({ ...prev, [id]: (e as Error).message }))
-    } finally {
-      setBusyId(null)
-    }
-  }
-
-  async function schedule(id: string) {
-    const localValue = scheduleInputById[id]
-    if (!localValue) { setErrorById((prev) => ({ ...prev, [id]: 'กรุณาเลือกวันเวลา' })); return }
-    setBusyId(id)
-    setErrorById((prev) => ({ ...prev, [id]: '' }))
-    try {
-      const scheduledAt = new Date(localValue).toISOString()
-      const res = await fetch('/api/approvals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'content', id, action: 'schedule', scheduledAt }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Schedule failed')
-      setContent((prev) => prev.map((c) => (c.id === id ? { ...c, scheduled_at: scheduledAt } : c)))
     } catch (e) {
       setErrorById((prev) => ({ ...prev, [id]: (e as Error).message }))
     } finally {
@@ -146,12 +102,6 @@ export default function ApprovalsQueue() {
       </div>
 
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '32px 24px' }}>
-        {publishedNote && (
-          <div style={{ marginBottom: 20, padding: 12, borderRadius: 8, background: `${green}15`, border: `1px solid ${green}40`, color: green, fontSize: 13 }}>
-            {publishedNote}
-          </div>
-        )}
-
         {!loading && total === 0 && (
           <div style={{ textAlign: 'center', color: text2, fontSize: 13, padding: 40 }}>
             ไม่มีอะไรรออนุมัติตอนนี้ 🎉
@@ -167,8 +117,6 @@ export default function ApprovalsQueue() {
               const payload = item.payload as Record<string, unknown>
               const imageUrl = payload.imageUrl as string | null | undefined
               const isApproved = item.status === 'approved'
-              const isPublishable = item.content_type === 'post' || item.content_type === 'ad'
-              const canPublish = isApproved && isPublishable && item.platform === 'facebook' && connectedBrandIds.includes(item.brand_id)
               return (
                 <div key={item.id} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -204,32 +152,8 @@ export default function ApprovalsQueue() {
                         >✕ Reject</button>
                       </>
                     )}
-                    {isApproved && canPublish && !item.scheduled_at && (
-                      <>
-                        <button
-                          onClick={() => publish(item.id)}
-                          disabled={busyId === item.id}
-                          style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', background: blue, color: '#fff' }}
-                        >{busyId === item.id ? 'Publishing…' : '📤 Publish to Facebook'}</button>
-                        <input
-                          type="datetime-local"
-                          value={scheduleInputById[item.id] ?? ''}
-                          onChange={(e) => setScheduleInputById((prev) => ({ ...prev, [item.id]: e.target.value }))}
-                          disabled={busyId === item.id}
-                          style={{ background: bg3, border: `1px solid ${border2}`, borderRadius: 8, padding: '6px 10px', fontSize: 12, color: text, fontFamily: 'inherit' }}
-                        />
-                        <button
-                          onClick={() => schedule(item.id)}
-                          disabled={busyId === item.id}
-                          style={{ padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${border2}`, background: 'transparent', color: text }}
-                        >🕒 Schedule</button>
-                      </>
-                    )}
-                    {isApproved && canPublish && item.scheduled_at && (
-                      <span style={{ fontSize: 12, color: text2 }}>🕒 ตั้งเวลาโพสต์ไว้: {new Date(item.scheduled_at).toLocaleString('th-TH')}</span>
-                    )}
-                    {isApproved && !canPublish && (
-                      <span style={{ fontSize: 12, color: text2 }}>✓ อนุมัติแล้ว — ยังไม่ได้เชื่อมต่อช่องทางเผยแพร่</span>
+                    {isApproved && (
+                      <span style={{ fontSize: 12, color: blue }}>✓ อนุมัติแล้ว — พร้อมให้ระบบภายนอกดึงไปเผยแพร่</span>
                     )}
                   </div>
                 </div>

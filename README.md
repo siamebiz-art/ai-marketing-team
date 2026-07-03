@@ -26,6 +26,17 @@ today, how would we design it?"* — not "how do we fit into what already exists
 Command Center integration is a Phase 3 decision, made only after this engine is proven to work
 standalone. Not addressed yet.
 
+## Intelligence-only, not execution (2026-07-03)
+
+MATE thinks, plans, and decides — it does not itself post to any platform. Facebook
+publish/schedule was built, dogfooded, and validated end-to-end earlier, then deliberately
+removed once the actual product direction became clear: MATE is the "brain" (`brand_memory`,
+specialists, workflows), and execution (rendering, posting, scheduling, platform APIs) belongs to
+a separate system (AMOS or otherwise) that consumes MATE's output. `content_items.status =
+'approved'` is the hand-off point — an external system reads it via `GET /api/approvals` /
+`GET /api/content` and does the actual publishing itself. MATE and Toonetic's existing AMOS run on
+**separate Supabase projects** — any integration goes through this REST API, never a shared DB.
+
 ## Status (2026-07-02)
 
 Live in production at `mate.toonetic.com` (`mission.toonetic.com` still works as an alias, not

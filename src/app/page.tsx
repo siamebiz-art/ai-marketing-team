@@ -315,7 +315,7 @@ export default function MissionControl() {
         {isCompleted && (
           <div style={{ background: `${green}15`, border: `1px solid ${green}55`, borderRadius: 16, padding: 20, textAlign: 'center' }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: green, marginBottom: 12 }}>
-              ✓ สร้างร่างเสร็จแล้ว — <b>ยังไม่ได้เผยแพร่</b> ต้องไปอนุมัติก่อนถึงจะโพสต์ขึ้น Facebook จริง
+              ✓ สร้างร่างเสร็จแล้ว — <b>ยังไม่พร้อมเผยแพร่</b> ต้องไปอนุมัติก่อน ระบบภายนอกถึงจะดึงไปโพสต์ต่อได้
             </div>
             <a
               href="/approvals"
