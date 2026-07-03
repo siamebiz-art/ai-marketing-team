@@ -9,7 +9,7 @@ export const growthHackerAgent: AgentDefinition<GrowthHackerInput, GrowthHackerO
   id: 'growth-hacker',
   displayName: 'Growth Hacker',
   modelTier: 'capable',
-  maxTokens: 700,
+  maxTokens: 1200,
   roleInstructions: GROWTH_HACKER_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildGrowthHackerUserPrompt(input),
   parseOutput: parseJsonOutput<GrowthHackerOutput>,
