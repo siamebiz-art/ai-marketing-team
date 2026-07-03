@@ -24,6 +24,10 @@ const PIPELINE = [
   { id: 'creative-director', label: 'Creative Director', emoji: '\u{1F3A8}', color: '#3b82f6' },
   { id: 'analytics-specialist', label: 'Analytics Specialist', emoji: '\u{1F4CA}', color: '#f59e0b' },
   { id: 'seo-specialist', label: 'SEO Specialist', emoji: '\u{1F50D}', color: '#22c55e' },
+  { id: 'growth-hacker', label: 'Growth Hacker', emoji: '\u{1F4C8}', color: '#a855f7' },
+  { id: 'social-media-manager', label: 'Social Media Manager', emoji: '\u{1F4F1}', color: '#06b6d4' },
+  { id: 'line-oa-specialist', label: 'LINE OA Specialist', emoji: '\u{1F4AC}', color: '#00c300' },
+  { id: 'crm-manager', label: 'CRM Manager', emoji: '\u{1F91D}', color: '#eab308' },
 ] as const
 
 const bg = '#080c18'
@@ -194,7 +198,7 @@ export default function MissionControl() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
             <div>
               <div style={{ fontSize: 16, fontWeight: 700 }}>Create Today&apos;s Content</div>
-              <div style={{ fontSize: 12, color: text2 }}>5 AI specialists, one approval gate, brand-scoped Marketing Brain</div>
+              <div style={{ fontSize: 12, color: text2 }}>{PIPELINE.length} AI specialists, one approval gate, brand-scoped Marketing Brain</div>
             </div>
             <button
               onClick={runWorkflow}
