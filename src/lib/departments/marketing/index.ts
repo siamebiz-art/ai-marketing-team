@@ -12,6 +12,9 @@ import { growthHackerAgent } from './specialists/growth-hacker'
 import { ceoAdvisorAgent } from './specialists/ceo-advisor'
 import { brandStrategistAgent } from './specialists/brand-strategist'
 import { positioningSpecialistAgent } from './specialists/positioning-specialist'
+import { socialMediaManagerAgent } from './specialists/social-media-manager'
+import { lineOaSpecialistAgent } from './specialists/line-oa-specialist'
+import { crmManagerAgent } from './specialists/crm-manager'
 import { createTodaysContentWorkflow } from './workflows/create-todays-content'
 import { launchCampaignWorkflow } from './workflows/launch-campaign'
 import { brandStrategyReviewWorkflow } from './workflows/brand-strategy-review'
@@ -31,6 +34,9 @@ export const MARKETING_AGENTS: AgentDefinition[] = [
   ceoAdvisorAgent as AgentDefinition,
   brandStrategistAgent as AgentDefinition,
   positioningSpecialistAgent as AgentDefinition,
+  socialMediaManagerAgent as AgentDefinition,
+  lineOaSpecialistAgent as AgentDefinition,
+  crmManagerAgent as AgentDefinition,
 ]
 
 export const MARKETING_WORKFLOWS: WorkflowDefinition[] = [

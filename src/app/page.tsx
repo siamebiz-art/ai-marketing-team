@@ -71,6 +71,9 @@ function outputPreview(agentId: string, output: Record<string, unknown> | null |
   if (agentId === 'analytics-specialist') return String(o.tip ?? '')
   if (agentId === 'seo-specialist') return String(o.seoTip ?? '')
   if (agentId === 'growth-hacker') return `${o.experiment}: ${o.change}`
+  if (agentId === 'social-media-manager') return String(o.weeklyPlatformMix ?? '')
+  if (agentId === 'line-oa-specialist') return String(o.lineMessage ?? '')
+  if (agentId === 'crm-manager') return `${o.segment}: ${o.followUpAction}`
   return JSON.stringify(o)
 }
 
