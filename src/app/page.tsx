@@ -81,6 +81,18 @@ function outputPreview(agentId: string, output: Record<string, unknown> | null |
   return JSON.stringify(o)
 }
 
+const amber = '#f59e0b'
+
+function usePendingApprovalCount(refreshKey: number) {
+  const [count, setCount] = useState<number | null>(null)
+  useEffect(() => {
+    fetch('/api/approvals').then((r) => r.json()).then((data) => {
+      setCount((data.content?.length ?? 0) + (data.support?.length ?? 0))
+    })
+  }, [refreshKey])
+  return count
+}
+
 export default function MissionControl() {
   const [brands, setBrands] = useState<Brand[]>([])
   const [brandSlug, setBrandSlug] = useState('')
@@ -88,6 +100,11 @@ export default function MissionControl() {
   const [result, setResult] = useState<RunResponse | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [approvalsRefreshKey, setApprovalsRefreshKey] = useState(0)
+  // Fetched fresh on mount and again every time a run finishes — this is the one thing Mission
+  // Control was missing: a workflow reaching "completed" only ever means "a draft is now
+  // sitting in /approvals," never "this is live." Nothing on this page said so before.
+  const pendingCount = usePendingApprovalCount(approvalsRefreshKey)
 
   useEffect(() => {
     fetch('/api/brands').then((r) => r.json()).then((data) => {
@@ -107,6 +124,7 @@ export default function MissionControl() {
       const data: RunResponse = await res.json()
       if (!res.ok) throw new Error(data.error || 'Workflow run failed')
       setResult(data)
+      if (data.run.status === 'completed') setApprovalsRefreshKey((k) => k + 1)
     } catch (e) {
       setErrorMsg((e as Error).message)
     } finally {
@@ -126,6 +144,7 @@ export default function MissionControl() {
       const data: RunResponse = await res.json()
       if (!res.ok) throw new Error(data.error || 'Approve failed')
       setResult(data)
+      if (data.run.status === 'completed') setApprovalsRefreshKey((k) => k + 1)
     } catch (e) {
       setErrorMsg((e as Error).message)
     } finally {
@@ -163,7 +182,21 @@ export default function MissionControl() {
           <a href="/dashboard" style={{ fontSize: 12, color: purple, fontWeight: 700, textDecoration: 'none' }}>🛰️ Command Center →</a>
           <a href="/campaigns" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>🚀 Campaigns →</a>
           <a href="/content" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>📊 Published →</a>
-          <a href="/approvals" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>📋 Approvals →</a>
+          <a
+            href="/approvals"
+            style={{
+              fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6,
+              color: pendingCount ? amber : text2,
+            }}
+          >
+            📋 Approvals →
+            {Boolean(pendingCount) && (
+              <span style={{
+                fontSize: 11, fontWeight: 800, color: '#1c1300', background: amber,
+                borderRadius: 999, padding: '1px 7px', minWidth: 16, textAlign: 'center',
+              }}>{pendingCount}</span>
+            )}
+          </a>
           <a href="/support" style={{ fontSize: 12, color: text2, fontWeight: 600, textDecoration: 'none' }}>🎧 Support Team →</a>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8, background: bg3, border: `1px solid ${border2}`,
@@ -280,8 +313,17 @@ export default function MissionControl() {
         )}
 
         {isCompleted && (
-          <div style={{ background: `${green}15`, border: `1px solid ${green}55`, borderRadius: 16, padding: 20, textAlign: 'center', fontSize: 13, fontWeight: 600, color: green }}>
-            ✓ Workflow complete — content saved to Marketing Brain
+          <div style={{ background: `${green}15`, border: `1px solid ${green}55`, borderRadius: 16, padding: 20, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: green, marginBottom: 12 }}>
+              ✓ สร้างร่างเสร็จแล้ว — <b>ยังไม่ได้เผยแพร่</b> ต้องไปอนุมัติก่อนถึงจะโพสต์ขึ้น Facebook จริง
+            </div>
+            <a
+              href="/approvals"
+              style={{
+                display: 'inline-block', padding: '10px 22px', borderRadius: 10, fontSize: 13, fontWeight: 700,
+                textDecoration: 'none', background: green, color: '#052e1c',
+              }}
+            >📋 ไปที่ Approvals เพื่ออนุมัติ →</a>
           </div>
         )}
       </div>
