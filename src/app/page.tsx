@@ -70,6 +70,7 @@ function outputPreview(agentId: string, output: Record<string, unknown> | null |
   if (agentId === 'creative-director') return `${o.headline}`
   if (agentId === 'analytics-specialist') return String(o.tip ?? '')
   if (agentId === 'seo-specialist') return String(o.seoTip ?? '')
+  if (agentId === 'growth-hacker') return `${o.experiment}: ${o.change}`
   return JSON.stringify(o)
 }
 

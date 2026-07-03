@@ -71,6 +71,10 @@ export const createTodaysContentWorkflow: WorkflowDefinition = {
         return { caption: copy.caption, platform: contentStrategy.platform }
       },
     },
+    {
+      agentId: 'growth-hacker',
+      buildInput: () => ({ todayLabel: todayLabel() }),
+    },
   ],
   // Marketing-specific "done" behavior lives here, not in the generic orchestrator — a
   // future Sales/Support/Research workflow would finalize into a different table entirely.

@@ -8,6 +8,7 @@ import { analyticsSpecialistAgent } from './specialists/analytics-specialist'
 import { seoSpecialistAgent } from './specialists/seo-specialist'
 import { researchSpecialistAgent } from './specialists/research-specialist'
 import { campaignPlannerAgent } from './specialists/campaign-planner'
+import { growthHackerAgent } from './specialists/growth-hacker'
 import { createTodaysContentWorkflow } from './workflows/create-todays-content'
 import { launchCampaignWorkflow } from './workflows/launch-campaign'
 
@@ -22,6 +23,7 @@ export const MARKETING_AGENTS: AgentDefinition[] = [
   seoSpecialistAgent as AgentDefinition,
   researchSpecialistAgent as AgentDefinition,
   campaignPlannerAgent as AgentDefinition,
+  growthHackerAgent as AgentDefinition,
 ]
 
 export const MARKETING_WORKFLOWS: WorkflowDefinition[] = [
