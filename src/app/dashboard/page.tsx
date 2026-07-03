@@ -22,12 +22,20 @@ interface ActivityItem {
   published_at: string | null
   brands: BrandRef | null
 }
+interface BrandHealth {
+  slug: string
+  name: string
+  approvalRate: number | null
+  avgEngagement: number | null
+  seoKeywordCoverage: number | null
+}
 interface DashboardData {
   pendingApprovalCount: number
   publishedThisWeekCount: number
   activeCampaignCount: number
   activeCampaigns: Campaign[]
   recentActivity: ActivityItem[]
+  brandHealth: BrandHealth[]
 }
 
 const bg = '#080c18'
@@ -101,6 +109,41 @@ export default function Dashboard() {
           <Link href="/" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>📝 สร้างคอนเทนต์วันนี้</Link>
           <Link href="/strategy" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>🧭 ทบทวนทิศทางแบรนด์</Link>
           <Link href="/expand" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>🧩 ขยายรูปแบบคอนเทนต์</Link>
+        </div>
+
+        {/* Brand Health — real aggregates over content_items from the last 30 days, never a
+            fabricated/AI-judged score. A brand with no decided content yet shows "ยังไม่มีข้อมูลพอ"
+            per metric instead of a misleading 0. */}
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: green, marginBottom: 12 }}>💚 Brand Health (30 วันล่าสุด)</div>
+          {data?.brandHealth.map((b) => (
+            <div key={b.slug} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{b.name}</div>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: b.approvalRate === null ? text2 : green }}>
+                    {b.approvalRate === null ? '—' : `${Math.round(b.approvalRate * 100)}%`}
+                  </div>
+                  <div style={{ fontSize: 11, color: text2 }}>อัตราอนุมัติ</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: b.avgEngagement === null ? text2 : blue }}>
+                    {b.avgEngagement === null ? '—' : b.avgEngagement.toFixed(1)}
+                  </div>
+                  <div style={{ fontSize: 11, color: text2 }}>เอนเกจเมนต์เฉลี่ย/โพสต์</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: b.seoKeywordCoverage === null ? text2 : purple }}>
+                    {b.seoKeywordCoverage === null ? '—' : `${Math.round(b.seoKeywordCoverage * 100)}%`}
+                  </div>
+                  <div style={{ fontSize: 11, color: text2 }}>SEO Keyword Coverage</div>
+                </div>
+              </div>
+              {b.approvalRate === null && b.avgEngagement === null && b.seoKeywordCoverage === null && (
+                <div style={{ fontSize: 11, color: text2, marginTop: 8 }}>ยังไม่มีข้อมูลพอ — เริ่มสร้าง/อนุมัติ/เผยแพร่คอนเทนต์ก่อน</div>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Active campaigns */}
