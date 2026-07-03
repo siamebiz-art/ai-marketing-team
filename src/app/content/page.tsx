@@ -14,6 +14,20 @@ interface ContentRow {
   brands: BrandRef | null
 }
 
+// Most content is copywriter-shaped ({ caption, ... }); expand-content-formats produces 3
+// other shapes that don't have a "caption" — same helper as /approvals.
+function primaryText(payload: Record<string, unknown>): string {
+  const copy = payload.copywriter as { caption?: string } | undefined
+  if (copy?.caption) return copy.caption
+  const website = payload['website-specialist'] as { heroHeadline?: string; heroSubheadline?: string } | undefined
+  if (website?.heroHeadline) return `${website.heroHeadline}\n${website.heroSubheadline ?? ''}`
+  const email = payload['email-marketing-specialist'] as { subject?: string; body?: string } | undefined
+  if (email?.subject) return `${email.subject}\n\n${email.body ?? ''}`
+  const video = payload['video-director'] as { hook?: string } | undefined
+  if (video?.hook) return video.hook
+  return JSON.stringify(payload).slice(0, 200)
+}
+
 const bg = '#080c18'
 const bg2 = '#0d1224'
 const bg3 = '#111827'
@@ -70,8 +84,8 @@ export default function PublishedContent() {
 
         {content.map((item) => {
           const payload = item.payload as Record<string, unknown>
-          const copy = payload.copywriter as Record<string, unknown> | undefined
           const imageUrl = payload.imageUrl as string | null | undefined
+          const previewText = primaryText(payload)
           const perf = item.performance as { likes?: number | null; comments?: number | null; shares?: number; fetchedAt?: string; limited?: boolean }
           return (
             <div key={item.id} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
@@ -89,7 +103,7 @@ export default function PublishedContent() {
                   />
                 )}
                 <div style={{ fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-wrap', color: text2 }}>
-                  {String(copy?.caption ?? '').slice(0, 160)}{String(copy?.caption ?? '').length > 160 ? '…' : ''}
+                  {previewText.slice(0, 160)}{previewText.length > 160 ? '…' : ''}
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>

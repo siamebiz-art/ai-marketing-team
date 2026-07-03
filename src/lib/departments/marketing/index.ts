@@ -15,9 +15,13 @@ import { positioningSpecialistAgent } from './specialists/positioning-specialist
 import { socialMediaManagerAgent } from './specialists/social-media-manager'
 import { lineOaSpecialistAgent } from './specialists/line-oa-specialist'
 import { crmManagerAgent } from './specialists/crm-manager'
+import { websiteSpecialistAgent } from './specialists/website-specialist'
+import { emailMarketingSpecialistAgent } from './specialists/email-marketing-specialist'
+import { videoDirectorAgent } from './specialists/video-director'
 import { createTodaysContentWorkflow } from './workflows/create-todays-content'
 import { launchCampaignWorkflow } from './workflows/launch-campaign'
 import { brandStrategyReviewWorkflow } from './workflows/brand-strategy-review'
+import { expandContentFormatsWorkflow } from './workflows/expand-content-formats'
 
 // The Marketing department's full roster — this is the ONE file core/agents/registry.ts and
 // core/orchestrator/registry.ts need to import to pick up everything this department owns.
@@ -37,10 +41,14 @@ export const MARKETING_AGENTS: AgentDefinition[] = [
   socialMediaManagerAgent as AgentDefinition,
   lineOaSpecialistAgent as AgentDefinition,
   crmManagerAgent as AgentDefinition,
+  websiteSpecialistAgent as AgentDefinition,
+  emailMarketingSpecialistAgent as AgentDefinition,
+  videoDirectorAgent as AgentDefinition,
 ]
 
 export const MARKETING_WORKFLOWS: WorkflowDefinition[] = [
   createTodaysContentWorkflow,
   launchCampaignWorkflow,
   brandStrategyReviewWorkflow,
+  expandContentFormatsWorkflow,
 ]

@@ -100,6 +100,7 @@ export default function Dashboard() {
           <Link href="/campaigns" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>🚀 เปิดแคมเปญใหม่</Link>
           <Link href="/" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>📝 สร้างคอนเทนต์วันนี้</Link>
           <Link href="/strategy" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>🧭 ทบทวนทิศทางแบรนด์</Link>
+          <Link href="/expand" style={{ padding: '8px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, textDecoration: 'none', background: bg3, border: `1px solid ${border2}`, color: text }}>🧩 ขยายรูปแบบคอนเทนต์</Link>
         </div>
 
         {/* Active campaigns */}

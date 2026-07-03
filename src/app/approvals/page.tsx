@@ -24,6 +24,21 @@ interface SupportApproval {
   brands: BrandRef | null
 }
 
+// Most content is copywriter-shaped ({ caption, ... }); expand-content-formats produces 3
+// other shapes (website-specialist/email-marketing-specialist/video-director) that don't have
+// a "caption" — this is the one place both pages need to know how to show each shape's main text.
+function primaryText(payload: Record<string, unknown>): string {
+  const copy = payload.copywriter as { caption?: string } | undefined
+  if (copy?.caption) return copy.caption
+  const website = payload['website-specialist'] as { heroHeadline?: string; heroSubheadline?: string } | undefined
+  if (website?.heroHeadline) return `${website.heroHeadline}\n${website.heroSubheadline ?? ''}`
+  const email = payload['email-marketing-specialist'] as { subject?: string; body?: string } | undefined
+  if (email?.subject) return `${email.subject}\n\n${email.body ?? ''}`
+  const video = payload['video-director'] as { hook?: string } | undefined
+  if (video?.hook) return video.hook
+  return JSON.stringify(payload).slice(0, 200)
+}
+
 const bg = '#080c18'
 const bg2 = '#0d1224'
 const bg3 = '#111827'
@@ -126,10 +141,10 @@ export default function ApprovalsQueue() {
             </div>
             {content.map((item) => {
               const payload = item.payload as Record<string, unknown>
-              const copy = payload.copywriter as Record<string, unknown> | undefined
               const imageUrl = payload.imageUrl as string | null | undefined
               const isApproved = item.status === 'approved'
-              const canPublish = isApproved && item.platform === 'facebook' && connectedBrandIds.includes(item.brand_id)
+              const isPublishable = item.content_type === 'post' || item.content_type === 'ad'
+              const canPublish = isApproved && isPublishable && item.platform === 'facebook' && connectedBrandIds.includes(item.brand_id)
               return (
                 <div key={item.id} style={{ background: bg2, border: `1px solid ${border}`, borderRadius: 12, padding: 16, marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -145,7 +160,7 @@ export default function ApprovalsQueue() {
                     />
                   )}
                   <div style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: 14 }}>
-                    {String(copy?.caption ?? '')}
+                    {primaryText(payload)}
                   </div>
                   {errorById[item.id] && (
                     <div style={{ fontSize: 12, color: red, marginBottom: 10 }}>{errorById[item.id]}</div>
