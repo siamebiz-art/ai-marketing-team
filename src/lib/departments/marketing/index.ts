@@ -10,6 +10,7 @@ import { researchSpecialistAgent } from './specialists/research-specialist'
 import { campaignPlannerAgent } from './specialists/campaign-planner'
 import { growthHackerAgent } from './specialists/growth-hacker'
 import { ceoAdvisorAgent } from './specialists/ceo-advisor'
+import { competitorAnalystAgent } from './specialists/competitor-analyst'
 import { brandStrategistAgent } from './specialists/brand-strategist'
 import { positioningSpecialistAgent } from './specialists/positioning-specialist'
 import { socialMediaManagerAgent } from './specialists/social-media-manager'
@@ -36,6 +37,7 @@ export const MARKETING_AGENTS: AgentDefinition[] = [
   campaignPlannerAgent as AgentDefinition,
   growthHackerAgent as AgentDefinition,
   ceoAdvisorAgent as AgentDefinition,
+  competitorAnalystAgent as AgentDefinition,
   brandStrategistAgent as AgentDefinition,
   positioningSpecialistAgent as AgentDefinition,
   socialMediaManagerAgent as AgentDefinition,

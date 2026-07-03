@@ -12,7 +12,7 @@ export const ceoAdvisorAgent: AgentDefinition<Record<string, never>, CeoAdvisorO
   id: 'ceo-advisor',
   displayName: 'CEO Advisor',
   modelTier: 'premium',
-  maxTokens: 900,
+  maxTokens: 1600,
   roleInstructions: CEO_ADVISOR_ROLE_INSTRUCTIONS,
   buildUserPrompt: () => buildCeoAdvisorUserPrompt(),
   parseOutput: parseJsonOutput<CeoAdvisorOutput>,

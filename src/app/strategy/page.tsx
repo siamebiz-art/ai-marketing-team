@@ -30,6 +30,7 @@ const pink = '#FF4D7D'
 
 const STEP_LABELS: Record<string, string> = {
   'ceo-advisor': '🧭 CEO Advisor',
+  'competitor-analyst': '🔎 Competitor Analyst',
   'brand-strategist': '🎯 Brand Strategist',
   'positioning-specialist': '📐 Positioning Specialist',
 }

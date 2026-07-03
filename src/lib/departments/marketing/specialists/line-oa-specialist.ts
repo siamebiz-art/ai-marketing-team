@@ -9,7 +9,7 @@ export const lineOaSpecialistAgent: AgentDefinition<LineOaSpecialistInput, LineO
   id: 'line-oa-specialist',
   displayName: 'LINE OA Specialist',
   modelTier: 'fast',
-  maxTokens: 500,
+  maxTokens: 800,
   roleInstructions: LINE_OA_SPECIALIST_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildLineOaSpecialistUserPrompt(input),
   parseOutput: parseJsonOutput<LineOaSpecialistOutput>,

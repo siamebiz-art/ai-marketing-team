@@ -9,7 +9,7 @@ export const crmManagerAgent: AgentDefinition<CrmManagerInput, CrmManagerOutput>
   id: 'crm-manager',
   displayName: 'CRM Manager',
   modelTier: 'fast',
-  maxTokens: 500,
+  maxTokens: 900,
   roleInstructions: CRM_MANAGER_ROLE_INSTRUCTIONS,
   buildUserPrompt: () => buildCrmManagerUserPrompt(),
   parseOutput: parseJsonOutput<CrmManagerOutput>,

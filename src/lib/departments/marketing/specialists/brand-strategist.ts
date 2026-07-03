@@ -9,7 +9,7 @@ export const brandStrategistAgent: AgentDefinition<BrandStrategistInput, BrandSt
   id: 'brand-strategist',
   displayName: 'Brand Strategist',
   modelTier: 'capable',
-  maxTokens: 700,
+  maxTokens: 1000,
   roleInstructions: BRAND_STRATEGIST_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildBrandStrategistUserPrompt(input),
   parseOutput: parseJsonOutput<BrandStrategistOutput>,

@@ -9,7 +9,7 @@ export const positioningSpecialistAgent: AgentDefinition<PositioningSpecialistIn
   id: 'positioning-specialist',
   displayName: 'Positioning Specialist',
   modelTier: 'capable',
-  maxTokens: 500,
+  maxTokens: 800,
   roleInstructions: POSITIONING_SPECIALIST_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildPositioningSpecialistUserPrompt(input),
   parseOutput: parseJsonOutput<PositioningSpecialistOutput>,

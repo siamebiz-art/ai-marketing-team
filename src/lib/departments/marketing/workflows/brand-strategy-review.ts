@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import type { WorkflowDefinition } from '@/lib/core/orchestrator/types'
 import type { CeoAdvisorOutput } from '@/lib/departments/marketing/prompts/ceo-advisor.prompts'
+import type { CompetitorAnalystOutput } from '@/lib/departments/marketing/prompts/competitor-analyst.prompts'
 import type { BrandStrategistOutput } from '@/lib/departments/marketing/prompts/brand-strategist.prompts'
 import type { PositioningSpecialistOutput } from '@/lib/departments/marketing/prompts/positioning-specialist.prompts'
 
@@ -18,10 +19,23 @@ export const brandStrategyReviewWorkflow: WorkflowDefinition = {
       buildInput: () => ({}),
     },
     {
+      agentId: 'competitor-analyst',
+      buildInput: (priorOutputs) => {
+        const ceo = priorOutputs['ceo-advisor'] as CeoAdvisorOutput
+        return { topPriority: ceo.topPriority }
+      },
+    },
+    {
       agentId: 'brand-strategist',
       buildInput: (priorOutputs) => {
         const ceo = priorOutputs['ceo-advisor'] as CeoAdvisorOutput
-        return { topPriority: ceo.topPriority, reasoning: ceo.reasoning }
+        const competitor = priorOutputs['competitor-analyst'] as CompetitorAnalystOutput
+        return {
+          topPriority: ceo.topPriority,
+          reasoning: ceo.reasoning,
+          competitiveLandscape: competitor.competitiveLandscape,
+          opportunity: competitor.opportunity,
+        }
       },
     },
     {
@@ -34,24 +48,30 @@ export const brandStrategyReviewWorkflow: WorkflowDefinition = {
   ],
   finalize: async ({ brandId, priorOutputs }) => {
     const ceo = priorOutputs['ceo-advisor'] as CeoAdvisorOutput | undefined
+    const competitor = priorOutputs['competitor-analyst'] as CompetitorAnalystOutput | undefined
     const strategist = priorOutputs['brand-strategist'] as BrandStrategistOutput | undefined
     const positioning = priorOutputs['positioning-specialist'] as PositioningSpecialistOutput | undefined
 
-    const rows: { summary: string; evidence: Record<string, unknown> }[] = []
-    if (ceo) rows.push({ summary: `[CEO Advisor] ${ceo.topPriority} — ${ceo.reasoning}`, evidence: { risks: ceo.risks } })
-    if (strategist) rows.push({ summary: `[Brand Strategist] ${strategist.strategicDirection}: ${strategist.keyMessage}`, evidence: { rationale: strategist.rationale } })
-    if (positioning) rows.push({ summary: `[Positioning] ${positioning.positioningStatement}`, evidence: { differentiator: positioning.differentiator } })
+    const rows: { category: string; summary: string; evidence: Record<string, unknown> }[] = []
+    if (ceo) rows.push({ category: 'strategic_direction', summary: `[CEO Advisor] ${ceo.topPriority} — ${ceo.reasoning}`, evidence: { risks: ceo.risks } })
+    if (competitor) rows.push({ category: 'competitor_move', summary: `[Competitor Analyst] ${competitor.competitiveLandscape} Threat: ${competitor.threat}. Opportunity: ${competitor.opportunity}`, evidence: {} })
+    if (strategist) rows.push({ category: 'strategic_direction', summary: `[Brand Strategist] ${strategist.strategicDirection}: ${strategist.keyMessage}`, evidence: { rationale: strategist.rationale } })
+    if (positioning) rows.push({ category: 'strategic_direction', summary: `[Positioning] ${positioning.positioningStatement}`, evidence: { differentiator: positioning.differentiator } })
 
     if (rows.length) {
       await supabaseAdmin.from('brand_memory').insert(
         rows.map((r) => ({
           brand_id: brandId,
-          category: 'strategic_direction',
+          category: r.category,
           summary: r.summary,
           evidence: r.evidence,
           confidence: 'medium',
         }))
       )
     }
+
+    // Honest bookkeeping — brand_competitors.last_analyzed_at exists but nothing set it before
+    // this specialist existed.
+    await supabaseAdmin.from('brand_competitors').update({ last_analyzed_at: new Date().toISOString() }).eq('brand_id', brandId)
   },
 }

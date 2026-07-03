@@ -9,7 +9,7 @@ export const seoSpecialistAgent: AgentDefinition<SeoSpecialistInput, SeoSpeciali
   id: 'seo-specialist',
   displayName: 'SEO Specialist',
   modelTier: 'fast',
-  maxTokens: 700,
+  maxTokens: 1100,
   roleInstructions: SEO_SPECIALIST_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildSeoSpecialistUserPrompt(input),
   parseOutput: parseJsonOutput<SeoSpecialistOutput>,

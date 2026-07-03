@@ -9,7 +9,7 @@ export const socialMediaManagerAgent: AgentDefinition<SocialMediaManagerInput, S
   id: 'social-media-manager',
   displayName: 'Social Media Manager',
   modelTier: 'fast',
-  maxTokens: 600,
+  maxTokens: 1000,
   roleInstructions: SOCIAL_MEDIA_MANAGER_ROLE_INSTRUCTIONS,
   buildUserPrompt: (input) => buildSocialMediaManagerUserPrompt(input),
   parseOutput: parseJsonOutput<SocialMediaManagerOutput>,
